@@ -11,7 +11,7 @@ typedef struct{
     unsigned int tagBit; //Bit de endereço da tag;
     unsigned int blocoBit; //Bit de endereço do bloco/celula/palavra 
     bool vBit; //Bit de validade;
-    int *celulas; //Armazena os dados/palavras do bloco da memoria principal, ou seja, seu tamanho depende da PalavrasPorBloco
+    int *celulas; //Armazena os dados/palavras do bloco da memoria principal, portanto, seu tamanho depende da PalavrasPorBloco
 }Linha; 
 
 typedef struct{
@@ -102,23 +102,19 @@ QntBit calcBit(Cache *cache, MemPrincipal *memPrincipal){
     return  qntBit;
 }
 
-unsigned int TagBit(unsigned int endereco){
-    QntBit qntBit; 
+unsigned int TagBit(unsigned int endereco, QntBit qntBit){
     return endereco >> (qntBit.palavra_qntBit + qntBit.conj_qntBit);
 }
 
-unsigned int ConjBit(unsigned int endereco){
-    QntBit qntBit; 
+unsigned int ConjBit(unsigned int endereco, QntBit qntBit){
     return (endereco >> qntBit.palavra_qntBit) & ((1 << qntBit.conj_qntBit) - 1);
 }
 
-unsigned int BlocoBit(unsigned int endereco){ 
-    QntBit qntBit; 
+unsigned int BlocoBit(unsigned int endereco, QntBit qntBit){ 
     return  endereco >> qntBit.palavra_qntBit;
 }
 
-unsigned int PalavraBit(unsigned int endereco){ 
-    QntBit qntBit; 
+unsigned int PalavraBit(unsigned int endereco, QntBit qntBit){ 
     return  endereco & ((1 << qntBit.palavra_qntBit) - 1);
 }
 
