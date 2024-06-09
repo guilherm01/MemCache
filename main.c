@@ -24,13 +24,13 @@ int main(){
             printf("Endereco: %d bits\n\n", qntBit.end_qntBit);
         unsigned int endereco = 14;
 
-        unsigned int tagBit = TagBit(endereco);
+        unsigned int tagBit = TagBit(endereco, qntBit);
             printf("tagBit: %d\n", tagBit);
-        unsigned int conjBit = ConjBit(endereco); 
+        unsigned int conjBit = ConjBit(endereco, qntBit); 
             printf("conjBit: %d\n", conjBit);  
-        unsigned int blocoBit = BlocoBit(endereco); 
+        unsigned int blocoBit = BlocoBit(endereco, qntBit); 
             printf("blocoBit: %d\n", blocoBit);  
-        unsigned int palavraBit = PalavraBit(endereco); 
+        unsigned int palavraBit = PalavraBit(endereco, qntBit); 
             printf("palavraBit: %d\n", palavraBit);     
 
     
