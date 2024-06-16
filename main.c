@@ -1,4 +1,5 @@
 #include "func.h"
+
 void imprimirCache(Cache *cache, MemPrincipal *memPrincipal, QntBit qntBit, unsigned int endereco){
     unsigned int conjQnt = (cache->mcTam/(palavraTam*memPrincipal->palavrasPorBloco))/cache->linhasPorConj;
     unsigned int linhaQnt = cache->mcTam/(palavraTam*memPrincipal->palavrasPorBloco);
@@ -13,24 +14,27 @@ void imprimirCache(Cache *cache, MemPrincipal *memPrincipal, QntBit qntBit, unsi
         }
     }
 }
+
 int main(){
     MemPrincipal *memPrincipal;
-        memPrincipal = mpInit(64, 4);
-        if(!memPrincipal){
+    memPrincipal = mpInit(64, 4);
+    if(!memPrincipal){
         printf("Erro ao iniciar MP\n"); 
         return 0; 
     }
 
     Cache *cache;
-        cache = cacheInit(64, 2, 4);
-        if(!cache){
+    cache = cacheInit(64, 2, 4);
+    if(!cache){
         printf("Erro ao iniciar Cache\n"); 
         return 0; 
     }
+
     int escolha;
     unsigned int endereco = 14;
     QntBit qntBit; 
     qntBit = calcBit(cache, memPrincipal);
+    
     do {
         printf("\nMenu Principal:\n");
         printf("1. qntBits do endereco\n");
@@ -47,7 +51,7 @@ int main(){
                 printf("[{s} BLOCO (%u) | {w} PALAVRA (%u)] \n\n", qntBit.bloco_qntBit, qntBit.palavra_qntBit);
                 printf("[TAG(%u) | {d} CONJUNTO (%u) | {w} PALAVRA(%u)] \n", qntBit.tag_qntBit, qntBit.conj_qntBit, qntBit.palavra_qntBit);
                 break;
-            case 2:
+            case 2: {
                 unsigned int tagBit = TagBit(endereco, qntBit);
                 unsigned int blocoBit = BlocoBit(endereco, qntBit);
                 unsigned int conjBit = ConjBit(endereco, qntBit);
@@ -55,6 +59,7 @@ int main(){
 
                 printf("TAG [%u]\n BLOCO [%u]\n PALAVRA [%u] \n CONJUNTO [%u] \n", tagBit, blocoBit, conjBit, palavraBit);
                 break;
+            }
             case 3:
                 mapeamento(cache, memPrincipal, qntBit, endereco);
                 break;
