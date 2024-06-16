@@ -7,9 +7,7 @@
 #define palavraTam 4 //bytes
 
 typedef struct{
-    unsigned int conjBit; //Bit de endereço do conjunto;
     unsigned int tagBit; //Bit de endereço da tag;
-    unsigned int blocoBit; //Bit de endereço do bloco/celula/palavra 
     bool vBit; //Bit de validade;
     int acesso; //Fazer a contagem de acesso de cada linha para substituir por LFU
     int *celulas; //Armazena os dados/palavras do bloco da memoria principal, portanto, seu tamanho depende da PalavrasPorBloco
@@ -108,8 +106,6 @@ Cache* cacheInit(unsigned int mcTam, unsigned int linhasPorConj, unsigned int pa
 
         for (j = 0; j < linhasPorConj; j++) {
             cache->conjunto[i].linhas[j].tagBit = 0;
-            cache->conjunto[i].linhas[j].blocoBit = 0;
-            cache->conjunto[i].linhas[j].conjBit = 0;
             cache->conjunto[i].linhas[j].vBit = false;
             cache->conjunto[i].linhas[j].acesso = 0;
 
@@ -189,11 +185,14 @@ int conjuntoCheio(unsigned int conjBit, Cache*cache){ //Verifica se o conjunto e
 void escreverCache(Cache *cache, MemPrincipal *memPrincipal, QntBit qntBit, unsigned int endereco){
     unsigned int conjBit = ConjBit(endereco, qntBit);
     unsigned int blocoBit = BlocoBit(endereco, qntBit);
-    int i; 
+    unsigned int tagBit = TagBit(endereco, qntBit);
+    int i = 0; 
     while(cache->conjunto[conjBit].linhas[i].vBit && (i < cache->linhasPorConj))
         i++; //Indice da linha vazia mais proxima;
-    for(int j = 0; j < memPrincipal->palavrasPorBloco; j++)
-        cache->conjunto[conjBit].linhas[i].celulas[j] = memPrincipal->bloco[blocoBit].data[i];
+    for(int j = 0; j < memPrincipal->palavrasPorBloco; j++){
+        cache->conjunto[conjBit].linhas[i].celulas[j] = memPrincipal->bloco[blocoBit].data[j];
+    }
+    cache->conjunto[conjBit].linhas[i].tagBit = tagBit;
     cache->conjunto[conjBit].linhas[i].vBit = true;
     
 }
