@@ -46,27 +46,27 @@ int main(){
         scanf("%d", &escolha);
 
         switch (escolha) {
-            case 1:
+            case 1: //Quantidade de bits do endereço
                 printf("Quantidade de bits de cada campo do endereco: \n\n");
                 printf("[{s} BLOCO (%u) | {w} PALAVRA (%u)] \n\n", qntBit.bloco_qntBit, qntBit.palavra_qntBit);
                 printf("[TAG(%u) | {d} CONJUNTO (%u) | {w} PALAVRA(%u)] \n", qntBit.tag_qntBit, qntBit.conj_qntBit, qntBit.palavra_qntBit);
                 break;
-            case 2: {
+            case 2: { //Posição do endereço
                 unsigned int tagBit = TagBit(endereco, qntBit);
                 unsigned int blocoBit = BlocoBit(endereco, qntBit);
                 unsigned int conjBit = ConjBit(endereco, qntBit);
                 unsigned int palavraBit = PalavraBit(endereco, qntBit);
 
-                printf("TAG [%u]\n BLOCO [%u]\n PALAVRA [%u] \n CONJUNTO [%u] \n", tagBit, blocoBit, conjBit, palavraBit);
+                printf("TAG [%u]\n BLOCO [%u]\n PALAVRA [%u] \n CONJUNTO [%u] \n", tagBit, blocoBit, PalavraBit, ConjBit);
                 break;
             }
-            case 3:
+            case 3: //Mapeamento
                 mapeamento(cache, memPrincipal, qntBit, endereco);
                 break;
-            case 4: 
+            case 4: //Imprimir cache
                 imprimirCache(cache, memPrincipal, qntBit, endereco);
                 break;
-            case 0:
+            case 0: //Sair do programa
                 printf("Saindo...\n");
                 break;
             default:
