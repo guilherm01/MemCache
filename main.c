@@ -2,10 +2,10 @@
 
 void imprimirCache(Cache *cache, MemPrincipal *memPrincipal, QntBit qntBit, unsigned int endereco){
     unsigned int conjQnt = (cache->mcTam/(palavraTam*memPrincipal->palavrasPorBloco))/cache->linhasPorConj;
-    unsigned int linhaQnt = cache->mcTam/(palavraTam*memPrincipal->palavrasPorBloco);
+
     for(int conj = 0; conj < conjQnt; conj++){
         printf("Conjunto [%d]\n", conj);
-        for(int line = 0; line < linhaQnt; line++){
+        for(int line = 0; line < cache->linhasPorConj; line++){
             printf("Line [%d]: V[%d] - AC[%d] - TAG[%d] - ", line, cache->conjunto[conj].linhas[line].vBit, cache->conjunto[conj].linhas[line].acesso, cache->conjunto[conj].linhas[line].tagBit);
             for(int celula = 0; celula < memPrincipal->palavrasPorBloco; celula++){
                 printf("%d|", cache->conjunto[conj].linhas[line].celulas[celula]);
@@ -31,7 +31,7 @@ int main(){
     }
 
     int escolha;
-    unsigned int endereco = 3;
+    unsigned int endereco = 14;
     QntBit qntBit; 
     qntBit = calcBit(cache, memPrincipal);
     
