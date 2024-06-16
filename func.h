@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -185,37 +186,23 @@ int conjuntoCheio(unsigned int conjBit, Cache*cache){ //Verifica se o conjunto e
     return 0; 
 }
 
-int buscarEndereco(Cache *cache, MemPrincipal *memPrincipal, QntBit qntBit, unsigned int endereco){ //Percorre o bloco dentro da linha pra verficar se tem o dado do endereco da MP
+void escreverCache(Cache *cache, MemPrincipal *memPrincipal, QntBit qntBit, unsigned int endereco){
     unsigned int conjBit = ConjBit(endereco, qntBit);
     unsigned int blocoBit = BlocoBit(endereco, qntBit);
-    unsigned int palavraBit = PalavraBit(endereco, qntBit);
-    unsigned int tagBit = TagBit(endereco, qntBit);
-    unsigned int linha = buscarLinha(conjBit, tagBit, cache);
-
-    for(int i = 0; i < memPrincipal->palavrasPorBloco; i++){
-        if(cache->conjunto[conjBit].linhas[linha].celulas[i] == memPrincipal->bloco[blocoBit].data[palavraBit])
-            return -1; //Endereco está na cache;
-        return 0; //Endereco nao está na cache
-    }
-}
-
-void escreverCache(Cache *cache, MemPrincipal *memPrincipal, QntBit qntBit, unsigned int endereco){
-    unsigned int conjBit = ConjBit(endereco, qntBit) - 1;
-    unsigned int blocoBit = BlocoBit(endereco, qntBit) - 1;
-    unsigned int tagBit = TagBit(endereco, qntBit);
-    unsigned int linha = buscarLinha(conjBit, tagBit, cache);
-
-    for(int i = 0; i < memPrincipal->palavrasPorBloco; i++)
-        cache->conjunto[conjBit].linhas[linha].celulas[i] = memPrincipal->bloco[blocoBit].data[i];
-    cache->conjunto[conjBit].linhas[linha].vBit = true;
+    int i; 
+    while(cache->conjunto[conjBit].linhas[i].vBit && (i < cache->linhasPorConj))
+        i++; //Indice da linha vazia mais proxima;
+    for(int j = 0; j < memPrincipal->palavrasPorBloco; j++)
+        cache->conjunto[conjBit].linhas[i].celulas[j] = memPrincipal->bloco[blocoBit].data[i];
+    cache->conjunto[conjBit].linhas[i].vBit = true;
     
 }
 
 void substLFU(Cache *cache, MemPrincipal *memPrincipal, QntBit qntBit, unsigned int endereco){ //Faz a substituição pelo método LFU
     int LFU = cache->conjunto[0].linhas[0].acesso; // Inicializa com o acesso da primeira linha do primeiro conjunto
     int indiceLFU = 0;
-    unsigned int conjBit = ConjBit(endereco, qntBit) - 1;
-    unsigned int blocoBit = BlocoBit(endereco, qntBit) - 1;
+    unsigned int conjBit = ConjBit(endereco, qntBit);
+    unsigned int blocoBit = BlocoBit(endereco, qntBit);
 
     // Percorre todas as linhas do conjunto para encontrar a menos frequentemente usada (indice)
     for(int i = 0; i < cache->linhasPorConj; i++){
@@ -233,29 +220,47 @@ void substLFU(Cache *cache, MemPrincipal *memPrincipal, QntBit qntBit, unsigned 
 
 void mapeamento(Cache *cache, MemPrincipal *memPrincipal, QntBit qntBit, unsigned int endereco){
     unsigned int tagBit = TagBit(endereco, qntBit);
-    unsigned int conjBit = ConjBit(endereco, qntBit) - 1;
-    unsigned int blocoBit = BlocoBit(endereco, qntBit) - 1; 
-    unsigned int palavraBit = PalavraBit(endereco, qntBit) - 1; 
+    unsigned int conjBit = ConjBit(endereco, qntBit);
+    unsigned int blocoBit = BlocoBit(endereco, qntBit); 
+    unsigned int palavraBit = PalavraBit(endereco, qntBit); 
     unsigned int linha = buscarLinha(conjBit, tagBit, cache);
-
+    printf("conjBit: %d\n", conjBit);
+    printf("blocoBit: %d\n", blocoBit);
+    printf("palavraBit: %d\n", palavraBit);
+    printf("tagBit: %d\n", tagBit);
+    printf("Linha: %d\n\n", linha);
     if(conjuntoCheio(conjBit, cache)){
-        if(cache->conjunto[conjBit].linhas[linha].celulas[palavraBit] == memPrincipal->bloco[blocoBit].data[palavraBit]){
+        if(linha != -1){
+            if(cache->conjunto[conjBit].linhas[linha].celulas[palavraBit] == memPrincipal->bloco[blocoBit].data[palavraBit]){
             cache->hit++;
             printf("Hit!\n");
             //Hit! endereço está na cache
+            }
+            else{
+            cache->miss++; //Miss! endereço não está na cache, então escreve usando LFU;
+            substLFU(cache, memPrincipal, qntBit, endereco);
+            }
         }
         else{
-            cache->miss++; //Miss! endereço não está na cache, então escreve usando LFU;
+            cache->miss++;
             substLFU(cache, memPrincipal, qntBit, endereco);
         }
     }
     else{ //Conjunto não está cheio
-        if(cache->conjunto[conjBit].linhas[linha].celulas[palavraBit] == memPrincipal->bloco[blocoBit].data[palavraBit]){
-            cache->hit++;  //Hit! endereço está na cache
-
+        if(linha != -1){
+            if(cache->conjunto[conjBit].linhas[linha].celulas[palavraBit] == memPrincipal->bloco[blocoBit].data[palavraBit]){
+                cache->hit++;  //Hit! endereço está na cache
+                printf("Hit! \n");
+             }
+            else{
+                cache->miss++; //Miss! endereço não está na cache, então escreve na proxima linha
+                printf("Miss! \n");
+                escreverCache(cache, memPrincipal, qntBit, endereco);
+            }
         }
         else{
-            cache->miss++; //Miss! endereço não está na cache, então escreve na proxima linha
+            cache->miss++;
+            printf("Miss!\n");
             escreverCache(cache, memPrincipal, qntBit, endereco);
         }
     }
