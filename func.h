@@ -1,8 +1,8 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stdbool.h>
+#include <string.h>
 
 #define palavraTam 4 //bytes
 
@@ -265,3 +265,16 @@ void mapeamento(Cache *cache, MemPrincipal *memPrincipal, QntBit qntBit, unsigne
     }
 }
     
+void imprimirCache(Cache *cache, MemPrincipal *memPrincipal, QntBit qntBit, int flag) {
+    printf("Estado atual da cache:\n");
+    for (unsigned int i = 0; i < (cache->mcTam / (palavraTam * memPrincipal->palavrasPorBloco)) / cache->linhasPorConj; i++) {
+        printf("Conjunto %u:\n", i);
+        for (unsigned int j = 0; j < cache->linhasPorConj; j++) {
+            printf(" Linha %u - V: %d, Tag: %u, Acessos: %d, Dados: ", j, cache->conjunto[i].linhas[j].vBit, cache->conjunto[i].linhas[j].tagBit, cache->conjunto[i].linhas[j].acesso);
+            for (unsigned int k = 0; k < memPrincipal->palavrasPorBloco; k++) {
+                printf("%d ", cache->conjunto[i].linhas[j].celulas[k]);
+            }
+            printf("\n");
+        }
+    }
+}
