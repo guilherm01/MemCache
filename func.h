@@ -1,9 +1,11 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stdbool.h>
 #include <time.h>
+#include <string.h>
+#include <ctype.h>
+
 #define palavraTam 4 //bytes
 
 typedef struct{
@@ -307,4 +309,35 @@ void mapeamento(Cache *cache, MemPrincipal *memPrincipal, QntBit qntBit, unsigne
     printf("\n\n");
 }
 
+void lerConfig(const char* filename, unsigned int *mpTam, unsigned int *palavrasPorBloco, unsigned int *mcTam, unsigned int *linhasPorConj, unsigned int *enderecos, unsigned int *numEnderecos) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("Erro ao abrir o arquivo de configuração");
+        exit(EXIT_FAILURE);
+    }
+
+    char line[256];
+    while (fgets(line, sizeof(line), file)) {
+        if (strstr(line, "Tamanho da MP:")) {
+            sscanf(line, "Tamanho da MP: %u", mpTam);
+        } else if (strstr(line, "Quantidade de palavras por bloco:")) {
+            sscanf(line, "Quantidade de palavras por bloco: %u", palavrasPorBloco);
+        } else if (strstr(line, "Tamanho da Cache:")) {
+            sscanf(line, "Tamanho da Cache: %u", mcTam);
+        } else if (strstr(line, "Quantidade de linhas por bloco:")) {
+            sscanf(line, "Quantidade de linhas por bloco: %u", linhasPorConj);
+        } else if (strstr(line, "Endereços:")) {
+            char *token = strtok(line, " :,");
+            while (token != NULL) {
+                if (isdigit(token[0])) {
+                    enderecos[*numEnderecos] = atoi(token);
+                    (*numEnderecos)++;
+                }
+                token = strtok(NULL, " ,");
+            }
+        }
+    }
+
+    fclose(file);
+}
 
