@@ -9,4 +9,20 @@ Abra o terminal no seu sistema operacional.
 Use o comando `cd` para navegar até o diretório onde seu código e arquivos de cabeçalho estão localizados.
 
 ```sh
-cd /caminho/para/diretorio_projeto
+cd /caminho/diretorio_projeto
+```
+
+### 3. Compile o código com o comando abaixo.
+
+```sh
+gcc -o MemCache .\main.c -lm
+
+```
+
+### 4. Executar o Programa Compilado
+Após a compilação bem-sucedida, execute o programa gerado.
+
+```sh
+.\MemCache.exe
+
+```
